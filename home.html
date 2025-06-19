@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Trang chủ</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f4f4f4;
+      font-family: 'Segoe UI', sans-serif;
+      color: #334155;
+      margin: 0;
+    }
+
+    .sidebar {
+      height: 100vh;
+      background-color: #fff;
+      padding: 20px 0;
+      border-right: 1px solid #e0e0e0;
+      box-shadow: 0 2px 5px #00000026;
+    }
+
+    .sidebar .logo {
+      font-weight: bold;
+      color: #2563eb;
+      font-size: 20px;
+      margin-bottom: 30px;
+      margin-left: 20px;
+    }
+
+    .sidebar a {
+      display: block;
+      padding: 15px 20px;
+      color: #334155;
+      text-decoration: none;
+      border-bottom: 1px solid #edf1f5;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .sidebar a.active,
+    .sidebar a:hover {
+      background-color: #e9f0ff;
+      color: #2a5fff;
+    }
+
+    .topbar {
+      background-color: #fff;
+      padding: 10px 20px;
+      border-bottom: 1px solid #e0e0e0;
+      box-shadow: 0 1px 5px #00000026;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .topbar h5 {
+      margin-bottom: 0;
+      color: #334155;
+      font-size: 18px;
+    }
+
+    .topbar span {
+      color: #334155;
+      font-size: 14px;
+    }
+
+    .main {
+      padding: 30px;
+    }
+
+    .main h6 {
+      color: #334155;
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    .table {
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 5px #00000026;
+    }
+
+    .table thead {
+      background: #e9f0ff;
+      color: #334155;
+    }
+
+    .table tbody tr {
+      transition: background 0.3s ease;
+    }
+
+    .table tbody tr:hover {
+      background: #edf5ff;
+    }
+
+    .table th,
+    .table td {
+      vertical-align: middle;
+      padding: 12px 16px;
+      border-bottom: 1px solid #edf1f5;
+    }
+
+    .table-status-pending {
+      background-color: #fff5cc;
+      color: #b57e00;
+      border: none;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .table-status-pending:hover {
+      background-color: #ffeb99;
+    }
+
+    .table-status-approved {
+      background-color: #d1fae5;
+      color: #065f46;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .table-status-rejected {
+      background-color: #fee2e2;
+      color: #991b1b;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    button.bg-danger {
+      background: #ef4444;
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 12px;
+      border: none;
+      margin-left: 20px;
+      margin-top: 20px;
+      box-shadow: 0 2px 5px #00000026;
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+
+    button.bg-danger:hover {
+      background: #dc2626;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px #00000026;
+    }
+
+    input[type='checkbox'] {
+      transform: scale(1.5);
+      cursor: pointer;
+    }
+
+    img.rounded-circle {
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 2px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <div class="d-flex">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="logo">.FMCarer</div>
+      <a href="#" class="active">🏠 Trang chủ</a>
+      <a href="user.html">👥 Người dùng</a>
+      <a href="revenue.html">📄 Thống kê</a>
+      <a href="support.html">⚙️ Hỗ trợ</a>
+      <a href="moderation.html">⚙️ Kiểm duyệt</a>
+      <button onclick="firebase.auth().signOut().then(() => location.href='login.html')" class="bg-danger text-gray px-3 py-1 rounded ms-3 mt-3">Đăng xuất</button>
+    </div>
+
+    <!-- Main content -->
+    <div class="flex-grow-1">
+      <div class="topbar">
+        <h5>Trang Chủ</h5>
+        <div>
+          <span class="me-3">Trần Đình Quân ▼</span>
+          <img src="https://tse3.mm.bing.net/th?id=OIP.8UnJNikrKFQPh5QF7ME9mQHaHn&pid=Api&P=0&h=180" class="rounded-circle" alt="Avatar" />
+        </div>
+      </div>
+
+      <div class="main">
+        <h6>Duyệt bài viết</h6>
+        <div class="table-responsive mt-3">
+          <table class="table table-bordered table-hover align-middle">
+            <thead class="table-light">
+              <tr>
+                <th><input type="checkbox" /></th>
+                <th>Tên người dùng</th>
+                <th>Ảnh bài viết</th>
+                <th>Mô tả</th>
+                <th>Mã bài viết</th>
+                <th>Trạng thái</th>
+              </tr>
+            </thead>
+            <tbody id="postTableBody">
+              <!-- Dữ kiện từ Firebase sẽ hiển thị tại đây -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal phê duyệt -->
+  <div class="modal fade" id="approvalModal" tabindex="-1" aria-labelledby="approvalModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content p-4">
+        <h5>Phê duyệt bài đăng</h5>
+        <p>Bạn muốn phê duyệt hoặc từ chối bài đăng này?</p>
+        <button id="approveBtn" class="btn btn-info me-2">Phê duyệt</button>
+        <button id="rejectBtn" class="btn btn-danger">Từ chối</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBxyaFIM3Ut8syuwNFng0YyYlrFbqVY450",
+      authDomain: "sof102.firebaseapp.com",
+      databaseURL: "https://sof102-default-rtdb.firebaseio.com",
+      projectId: "sof102",
+      storageBucket: "sof102.appspot.com",
+      messagingSenderId: "810054011446",
+      appId: "1:810054011446:web:c852a9f4cf0ab6dd756697"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    let currentPostId = null;
+
+    firebase.auth().onAuthStateChanged(user => {
+      if (!user) {
+        location.href = "login.html";
+        return;
+      }
+
+      db.ref("Posts").once("value").then(snapshot => {
+        const tbody = document.getElementById("postTableBody");
+
+        tbody.innerHTML = "";
+        snapshot.forEach(postSnap => {
+          const post = postSnap.val();
+          const uid = post.publisher || "Không rõ";
+
+          db.ref("Users/" + uid).once("value").then(userSnap => {
+            const userData = userSnap.val();
+            const username = userData?.username || "Ẩn danh";
+
+            let statusClass = "table-status-pending";
+            let statusText = "Chờ duyệt";
+
+            if (post.status === "approved") {
+              statusClass = "table-status-approved";
+              statusText = "Phê duyệt";
+            } else if (post.status === "rejected") {
+              statusClass = "table-status-rejected";
+              statusText = "Từ chối";
+            }
+
+            const row = `
+              <tr>
+                <td><input type="checkbox" /></td>
+                <td>${username}</td>
+                <td><img src="${post.postimage || ''}" width="60" class="rounded border" alt="Post Image"/></td>
+                <td>${post.description || ''}</td>
+                <td>${post.postid || postSnap.key}</td>
+                <td>
+                    <button 
+                        class="${statusClass}" 
+                        onclick='openApprovalModal("${post.postid || postSnap.key}")'>
+                        ${statusText}
+                    </button>
+                </td>
+              </tr>`;
+
+            tbody.innerHTML += row;
+          });
+        });
+      }).catch(error => {
+        console.error("Lỗi khi lấy dữ kiện bài viết.", error);
+      });
+    });
+
+    function openApprovalModal(id) {
+      currentPostId = id;
+      var modal = new bootstrap.Modal(document.getElementById('approvalModal'), {});
+      modal.show();
+
+      document.getElementById('approveBtn').onclick = function() {
+        db.ref("Posts/" + currentPostId).update({status:'approved'})
+          .then(() => {
+            alert("Bài đăng được phê duyệt!");
+            modal.hide();
+            location.reload();
+          })
+          .catch((error) => console.error(error)); 
+      }
+
+      document.getElementById('rejectBtn').onclick = function() {
+        db.ref("Posts/" + currentPostId).update({status:'rejected'})
+          .then(() => {
+            alert("Bài đăng bị từ chối.");
+            modal.hide();
+            location.reload();
+          })
+          .catch((error) => console.error(error)); 
+      }
+    }
+  </script>
+
+</body>
+</html>

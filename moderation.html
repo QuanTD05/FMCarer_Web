@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiểm duyệt nội dung</title>
+</head>
+<!-- moderation.html -->
+<body>
+  <h2>Danh sách bài chờ duyệt</h2>
+  <ul id="postList"></ul>
+  <script>
+    db.collection("posts").where("status", "==", "pending").get().then(snapshot => {
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const li = document.createElement("li");
+        li.innerHTML = `<b>${data.title}</b> - ${data.content}<br>
+          <button onclick="approve('${doc.id}')">Duyệt</button>
+          <button onclick="reject('${doc.id}')">Từ chối</button>`;
+        document.getElementById("postList").appendChild(li);
+      });
+    });
+
+    function approve(id) {
+      db.collection("posts").doc(id).update({ status: "approved" });
+      alert("Đã duyệt");
+      location.reload();
+    }
+
+    function reject(id) {
+      db.collection("posts").doc(id).update({ status: "rejected" });
+      alert("Đã từ chối");
+      location.reload();
+    }
+  </script>
+</body>
+
+</html>

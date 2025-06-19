@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Xử lý hỗ trợ kỹ thuật & khiếu nại</title>
+</head>
+
+<body>
+  <h2>Yêu cầu hỗ trợ / Khiếu nại</h2>
+  <ul id="supportList"></ul>
+  <script>
+    db.collection("support").where("status", "==", "open").get().then(snapshot => {
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const li = document.createElement("li");
+        li.innerHTML = `${data.user} - ${data.message} <button onclick="markDone('${doc.id}')">Đã xử lý</button>`;
+        document.getElementById("supportList").appendChild(li);
+      });
+    });
+
+    function markDone(id) {
+      db.collection("support").doc(id).update({ status: "done" });
+      alert("Đã cập nhật trạng thái");
+      location.reload();
+    }
+  </script>
+</body>
+
+</html>
