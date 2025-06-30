@@ -1,168 +1,136 @@
 <!DOCTYPE html>
 <html lang="vi">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Quản lý tài khoản người dùng</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" />
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Quản lý tài khoản người dùng</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+</head>
 
-  <body class="bg-gray-100 font-semibold text-gray-900">
-    <div class="flex">
-      <!-- Sidebar -->
-      <div class="bg-gray-50 p-6 border-r border-gray-300 min-h-screen shadow-md">
-        <div class="text-blue-600 font-semibold text-2xl mb-10 ml-4">
-          .FMCarer
+<body class="bg-gray-100 font-sans text-gray-900">
+  <div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside class="bg-white p-6 border-r border-gray-200 w-64 shadow-lg">
+      <div class="text-blue-600 font-bold text-2xl mb-10">.FMCarer</div>
+      <nav class="flex flex-col space-y-3">
+        <a href="home.html" class="hover:bg-gray-200 px-4 py-2 rounded-md transition">🏠 Trang chủ</a>
+        <a href="user.html" class="bg-blue-100 text-blue-600 px-4 py-2 rounded-md font-semibold shadow">👥 Người dùng</a>
+        <a href="revenue.html" class="hover:bg-gray-200 px-4 py-2 rounded-md">📄 Thống kê</a>
+        <a href="support.html" class="hover:bg-gray-200 px-4 py-2 rounded-md">🛠 Hỗ trợ</a>
+        <a href="moderation.html" class="hover:bg-gray-200 px-4 py-2 rounded-md">🛡 Kiểm duyệt</a>
+        <button onclick="auth.signOut().then(() => location.href='login.html')" class="bg-red-500 text-white px-4 py-2 rounded-md mt-10 hover:bg-red-600 transition">Đăng xuất</button>
+      </nav>
+    </aside>
+
+    <!-- Main content -->
+    <main class="flex-1">
+      <!-- Topbar -->
+      <header class="bg-white p-4 border-b border-gray-200 flex justify-between items-center shadow">
+        <h1 class="text-lg font-semibold">📋 Danh sách người dùng</h1>
+        <div class="flex items-center space-x-4">
+          <span class="text-sm">Trần Đình Quân ▼</span>
+          <img src="https://tse3.mm.bing.net/th?id=OIP.8UnJNikrKFQPh5QF7ME9mQHaHn&pid=Api&P=0&h=180"
+               alt="avatar"
+               class="rounded-full w-10 h-10 object-cover border-2 border-gray-300" />
         </div>
-        <nav class="flex flex-col space-y-4">
-          <a
-            href="home.html"
-            class="hover:bg-gray-200 px-4 py-2 rounded-md transition-colors">🏠 Trang chủ</a>
-          <a
-            href="user.html"
-            class="bg-blue-100 text-blue-600 px-4 py-2 rounded-md font-semibold shadow">👥 Người dùng</a>
-          <a
-            href="revenue.html"
-            class="hover:bg-gray-200 px-4 py-2 rounded-md">📄 Thống kê</a>
-          <a
-            href="support.html"
-            class="hover:bg-gray-200 px-4 py-2 rounded-md">⚙️ Hỗ trợ</a>
-          <a
-            href="moderation.html"
-            class="hover:bg-gray-200 px-4 py-2 rounded-md">⚙️ Kiểm duyệt</a>
-          <button
-            onclick="auth.signOut().then(() => location.href='login.html')"
-            class="bg-red-500 px-4 py-2 rounded-md text-gray-50 mt-10 hover:bg-red-600 transition">
-            Đăng xuất
-          </button>
-        </nav>
-      </div>
+      </header>
 
-      <!-- Main content -->
-      <div class="flex-grow">
-        <!-- Topbar -->
-        <div
-          class="bg-gray-50 p-4 border-b border-gray-300 flex justify-between items-center shadow">
-          <h5 class="text-gray-900 font-semibold">Người dùng</h5>
-          <div class="flex items-center space-x-4">
-            <span>Trần Đình Quân ▼</span>
-            <img src="https://tse3.mm.bing.net/th?id=OIP.8UnJNikrKFQPh5QF7ME9mQHaHn&pid=Api&P=0&h=180" 
-                 class="rounded-full border-2 border-gray-300 p-0.5" 
-                 alt="Avatar" 
-                 width="40" 
-                 height="40" 
-                 style="object-fit:cover;"/>
+      <!-- Content Section -->
+      <section class="p-6">
+        <div class="bg-white p-6 rounded shadow">
+          <h2 class="text-xl font-semibold mb-4">👥 Quản lý người dùng</h2>
+          <div class="overflow-x-auto">
+            <table class="min-w-full text-sm text-left border border-gray-200 rounded-md overflow-hidden">
+              <thead class="bg-gray-100 text-gray-700 uppercase tracking-wider">
+                <tr>
+                  <th class="py-3 px-4">Họ tên</th>
+                  <th class="py-3 px-4">Username</th>
+                  <th class="py-3 px-4 text-center">Ảnh</th>
+                  <th class="py-3 px-4">Tiểu sử</th>
+                  <th class="py-3 px-4">Email</th>
+                  <th class="py-3 px-4 text-center">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="userTableBody" class="bg-white divide-y divide-gray-200">
+                <!-- Dữ liệu người dùng sẽ được đổ vào đây -->
+              </tbody>
+            </table>
           </div>
         </div>
+      </section>
+    </main>
+  </div>
 
-        <!-- Main Section -->
-        <div class="p-6">
-          <h6 class="text-gray-900 font-semibold">Danh sách tài khoản</h6>
-          <div class="bg-gray-50 p-4 rounded-md shadow-md mt-3">
-            <div class="table-auto w-full overflow-x-auto">
-              <table class="w-full border-collapse">
-                <thead>
-                    <tr class="bg-gray-200 text-gray-700 font-semibold">
-                    <th class="py-2 px-4">Full Name</th>
-                    <th class="py-2 px-4">Username</th>
-                    <th class="py-2 px-4">Image</th>
-                    <th class="py-2 px-4">Bio</th>
-                    <th class="py-2 px-4">Email</th>
-                    <th class="py-2 px-4">Xoá</th>
-                   </tr>
-                </thead>
-                <tbody id="userTableBody" class="bg-gray-50">
-                    <!-- Dữ kiện sẽ được thêm tại đây -->
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
-    <!-- Firebase SDK compat -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBxyaFIM3Ut8syuwNFng0YyYlrFbqVY450",
+      authDomain: "sof102.firebaseapp.com",
+      databaseURL: "https://sof102-default-rtdb.firebaseio.com",
+      projectId: "sof102",
+      storageBucket: "sof102.appspot.com",
+      messagingSenderId: "810054011446",
+      appId: "1:810054011446:web:c852a9f4cf0ab6dd756697",
+      measurementId: "G-77NKLSP61K"
+    };
 
-    <script>
-      // 🔥 Cấu hình Firebase
-      const firebaseConfig = {
-        apiKey: "AIzaSyBxyaFIM3Ut8syuwNFng0YyYlrFbqVY450",
-        authDomain: "sof102.firebaseapp.com",
-        databaseURL: "https://sof102-default-rtdb.firebaseio.com",
-        projectId: "sof102",
-        storageBucket: "sof102.appspot.com",
-        messagingSenderId: "810054011446",
-        appId: "1:810054011446:web:c852a9f4cf0ab6dd756697",
-        measurementId: "G-77NKLSP61K",
-      };
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
 
-      if (!firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    auth.onAuthStateChanged(user => {
+      if (!user || user.email !== "trandinhquan74l1@gmail.com") {
+        window.location.href = "login.html";
+        return;
       }
 
-      firebase.auth().onAuthStateChanged((user) => {
-        if (!user || user.email !== "trandinhquan66@gmail.com") {
-          window.location.href = "login.html";
-          return;
-        }
+      const dbRef = firebase.database().ref("Users");
 
-        const dbRef = firebase.database().ref("Users");
+      dbRef.once("value").then(snapshot => {
+        const tbody = document.getElementById("userTableBody");
+        tbody.innerHTML = "";
 
-        dbRef
-          .once("value")
-          .then((snapshot) => {
-            const tbody = document.getElementById("userTableBody");
+        snapshot.forEach(child => {
+          const data = child.val();
+          const uid = child.key;
 
-            tbody.innerHTML = "";
-
-            snapshot.forEach((child) => {
-              const data = child.val();
-              const uid = child.key;
-
-              tbody.innerHTML += `
-                <tr class="border-t hover:bg-gray-100 transition">
-                    <td class="py-2 px-4">${data.fullname || ''}</td>
-                    <td class="py-2 px-4">${data.username || ''}</td>
-                    <td class="py-2 px-4">
-                        <img src="${data.imageurl ||
-                          ''}" alt="User Image" width="50" class="rounded-full border border-gray-300 p-0.5">
-                    </td>
-                    <td class="py-2 px-4">${data.bio || ''}</td>
-                    <td class="py-2 px-4">${data.email || ''}</td>
-                    <td class="py-2 px-4">
-                        <button 
-                        	onclick="deleteUser('${uid}')" 
-                        	class="text-red-500 font-semibold hover:underline">
-                        	🗑 Xoá
-                        </button>
-                    </td>
-                </tr>`;
-            });
-          })
-          .catch((err) => {
-            console.error("Lỗi khi lấy dữ kiện từ Realtime Database.", err);
-          });
+          tbody.innerHTML += `
+            <tr class="hover:bg-gray-50 transition">
+              <td class="py-2 px-4">${data.fullname || ""}</td>
+              <td class="py-2 px-4">${data.username || ""}</td>
+              <td class="py-2 px-4 text-center">
+                <img src="${data.imageurl || ''}" alt="Ảnh" class="w-10 h-10 object-cover rounded-full mx-auto border border-gray-300" />
+              </td>
+              <td class="py-2 px-4">${data.bio || ""}</td>
+              <td class="py-2 px-4">${data.email || ""}</td>
+              <td class="py-2 px-4 text-center">
+                <button onclick="deleteUser('${uid}')" class="text-red-500 font-medium hover:underline">🗑 Xoá</button>
+              </td>
+            </tr>`;
+        });
+      }).catch(err => {
+        console.error("Lỗi khi lấy dữ liệu:", err);
       });
+    });
 
-      // 🗑️ Hàm xoá người dùng
-      function deleteUser(uid) {
-        if (confirm(`Bạn có chắc chắn muốn xoá tài khoản này?`)) {
-          firebase
-            .database()
-            .ref("Users/" + uid)
-            .remove()
-            .then(() => {
-              alert("Đã xoá tài khoản.");
-              location.reload();
-            })
-            .catch((err) => {
-              console.error("Lỗi khi xoá.", err);
-            });
-        }
+    function deleteUser(uid) {
+      if (confirm("Bạn có chắc chắn muốn xoá tài khoản này không?")) {
+        firebase.database().ref("Users/" + uid).remove()
+          .then(() => {
+            alert("Đã xoá tài khoản.");
+            location.reload();
+          })
+          .catch(err => {
+            console.error("Lỗi khi xoá người dùng:", err);
+          });
       }
-    </script>
-  </body>
+    }
+  </script>
+</body>
 </html>

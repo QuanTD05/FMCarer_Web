@@ -1,151 +1,164 @@
 <!DOCTYPE html>
 <html lang="vi">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Thống kê doanh thu</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Thống kê doanh thu</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+</head>
 
-  <body class="bg-gray-100 font-semibold text-gray-900">
-    <div class="flex">
-      <!-- Sidebar -->
-      <div class="bg-white p-6 border-r border-gray-200 min-h-screen shadow-md">
-        <div class="text-blue-600 font-semibold text-2xl mb-10 ml-4">.FMCarer</div>
-        <nav class="flex flex-col space-y-4">
-          <a href="home.html" class="hover:bg-gray-200 px-4 py-2 rounded-md transition-colors">🏠 Trang chủ</a>
-          <a href="user.html" class="hover:bg-gray-200 px-4 py-2 rounded-md">👥 Người dùng</a>
-          <a href="revenue.html" class="bg-blue-100 text-blue-600 px-4 py-2 rounded-md font-semibold shadow">📄 Thống kê</a>
-          <a href="support.html" class="hover:bg-gray-200 px-4 py-2 rounded-md">⚙️ Hỗ trợ</a>
-          <a href="moderation.html" class="hover:bg-gray-200 px-4 py-2 rounded-md">⚙️ Kiểm duyệt</a>
-          <button
-            onclick="location.href='login.html'"
-            class="bg-red-500 px-4 py-2 rounded-md text-white mt-10 hover:bg-red-600 transition">
-            Đăng xuất
-          </button>
-        </nav>
-      </div>
+<body class="bg-gray-100 font-sans text-gray-900">
+  <div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside class="bg-white p-6 border-r border-gray-200 shadow-md w-64">
+      <div class="text-blue-600 font-bold text-2xl mb-10">.FMCarer</div>
+      <nav class="flex flex-col space-y-3">
+        <a href="home.html" class="hover:bg-gray-200 px-4 py-2 rounded-md transition">🏠 Trang chủ</a>
+        <a href="user.html" class="hover:bg-gray-200 px-4 py-2 rounded-md">👥 Người dùng</a>
+        <a href="revenue.html" class="bg-blue-100 text-blue-600 px-4 py-2 rounded-md font-semibold shadow">📄 Thống kê</a>
+        <a href="support.html" class="hover:bg-gray-200 px-4 py-2 rounded-md">🛠 Hỗ trợ</a>
+        <a href="moderation.html" class="hover:bg-gray-200 px-4 py-2 rounded-md">🛡 Kiểm duyệt</a>
+        <button onclick="location.href='login.html'" class="bg-red-500 text-white px-4 py-2 rounded-md mt-10 hover:bg-red-600">
+          Đăng xuất
+        </button>
+      </nav>
+    </aside>
 
-      <!-- Main content -->
-      <div class="flex-grow">
-        <!-- Topbar -->
-        <div class="bg-gray-50 p-4 border-b border-gray-300 flex justify-between items-center shadow">
-          <h5 class="text-gray-900 font-semibold">📊 Thống kê Doanh thu</h5>
-          <div class="flex items-center space-x-4">
-            <span>Trần Đình Quân ▼</span>
-            <img src="https://tse3.mm.bing.net/th?id=OIP.8UnJNikrKFQPh5QF7ME9mQHaHn&pid=Api&P=0&h=180"
-              class="rounded-full border-2 border-gray-300 p-0.5" width="40" height="40" style="object-fit: cover;" />
-          </div>
+    <!-- Main content -->
+    <main class="flex-1 p-6 space-y-6">
+      <!-- Topbar -->
+      <header class="flex justify-between items-center bg-white p-4 rounded shadow">
+        <h1 class="text-xl font-semibold text-gray-800">📊 Thống kê Doanh thu</h1>
+        <div class="flex items-center space-x-4">
+          <span class="text-sm">Trần Đình Quân ▼</span>
+          <img src="https://tse3.mm.bing.net/th?id=OIP.8UnJNikrKFQPh5QF7ME9mQHaHn&pid=Api&P=0&h=180"
+               alt="avatar"
+               class="rounded-full w-10 h-10 object-cover border-2 border-gray-300" />
         </div>
+      </header>
 
-        <!-- Content -->
-        <div class="p-6 space-y-4">
-          <div class="bg-white rounded-lg shadow p-4"><strong>Tuần này:</strong> <span id="revenueWeek">Loading...</span></div>
-          <div class="bg-white rounded-lg shadow p-4"><strong>Tháng này:</strong> <span id="revenueMonth">Loading...</span></div>
-          <div class="bg-white rounded-lg shadow p-4"><strong>Năm nay:</strong> <span id="revenueYear">Loading...</span></div>
-
-          <div class="bg-white rounded-lg shadow p-4">
-            <canvas id="weeklyChart" class="w-full" height="100"></canvas>
-          </div>
-
-          <div class="bg-white rounded-lg shadow p-4">
-            <canvas id="monthlyChart" class="w-full" height="100"></canvas>
-          </div>
+      <!-- Summary -->
+      <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white p-4 rounded shadow text-center">
+          <h2 class="text-sm text-gray-600 mb-2">Tuần này</h2>
+          <div id="revenueWeek" class="text-xl font-bold text-blue-600">Loading...</div>
         </div>
-      </div>
-    </div>
+        <div class="bg-white p-4 rounded shadow text-center">
+          <h2 class="text-sm text-gray-600 mb-2">Tháng này</h2>
+          <div id="revenueMonth" class="text-xl font-bold text-blue-600">Loading...</div>
+        </div>
+        <div class="bg-white p-4 rounded shadow text-center">
+          <h2 class="text-sm text-gray-600 mb-2">Năm nay</h2>
+          <div id="revenueYear" class="text-xl font-bold text-blue-600">Loading...</div>
+        </div>
+      </section>
 
-    <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-      import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
+      <!-- Charts -->
+      <section class="bg-white p-6 rounded shadow">
+        <h3 class="font-semibold mb-4">📅 Doanh thu theo ngày (tuần hiện tại)</h3>
+        <canvas id="weeklyChart" height="100"></canvas>
+      </section>
 
-      const firebaseConfig = {
-        apiKey: "AIzaSyBxyaFIM3Ut8syuwNFng0YyYlrFbqVY450",
-        authDomain: "sof102.firebaseapp.com",
-        databaseURL: "https://sof102-default-rtdb.firebaseio.com",
-        projectId: "sof102",
-        storageBucket: "sof102.appspot.com",
-        messagingSenderId: "810054011446",
-        appId: "1:810054011446:web:c852a9f4cf0ab6dd756697",
-        measurementId: "G-77NKLSP61K"
-      };
+      <section class="bg-white p-6 rounded shadow">
+        <h3 class="font-semibold mb-4">🗓 Doanh thu theo tháng (năm hiện tại)</h3>
+        <canvas id="monthlyChart" height="100"></canvas>
+      </section>
+    </main>
+  </div>
 
-      const app = initializeApp(firebaseConfig);
-      const db = getDatabase(app);
-      const paymentsRef = ref(db, 'payments');
+  <!-- Firebase & ChartJS -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
 
-      function parseDate(str) {
-        if (!str) return new Date(NaN);
-        const [dateStr] = str.split(" ");
-        const [year, month, day] = dateStr.split("-").map(Number);
-        return new Date(year, month - 1, day);
-      }
+    const firebaseConfig = {
+      apiKey: "AIzaSyBxyaFIM3Ut8syuwNFng0YyYlrFbqVY450",
+      authDomain: "sof102.firebaseapp.com",
+      databaseURL: "https://sof102-default-rtdb.firebaseio.com",
+      projectId: "sof102",
+      storageBucket: "sof102.appspot.com",
+      messagingSenderId: "810054011446",
+      appId: "1:810054011446:web:c852a9f4cf0ab6dd756697",
+      measurementId: "G-77NKLSP61K"
+    };
 
-      const now = new Date();
-      const startOfWeek = new Date(now);
-      startOfWeek.setDate(now.getDate() - now.getDay() + 1);
-      const endOfWeek = new Date(startOfWeek);
-      endOfWeek.setDate(startOfWeek.getDate() + 6);
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const paymentsRef = ref(db, 'TransactionHistories');
 
-      onValue(paymentsRef, (snapshot) => {
-        let weekTotal = 0, monthTotal = 0, yearTotal = 0;
-        let monthlyData = Array(12).fill(0);
-        let dailyData = Array(7).fill(0);
+    const now = new Date();
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - now.getDay() + 1);
+    startOfWeek.setHours(0, 0, 0, 0);
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    endOfWeek.setHours(23, 59, 59, 999);
 
-        snapshot.forEach(child => {
+    onValue(paymentsRef, (snapshot) => {
+      let weekTotal = 0, monthTotal = 0, yearTotal = 0;
+      const dailyData = Array(7).fill(0);
+      const monthlyData = Array(12).fill(0);
+
+      snapshot.forEach(userSnap => {
+        userSnap.forEach(child => {
           const { amount, timestamp } = child.val();
-          const date = parseDate(timestamp);
+          const date = new Date(timestamp);
           if (isNaN(date)) return;
-          const amt = amount || 0;
+
+          const amt = Number(amount) || 0;
 
           if (date >= startOfWeek && date <= endOfWeek) {
             weekTotal += amt;
-            const dayOfWeek = (date.getDay() + 6) % 7;
-            dailyData[dayOfWeek] += amt;
+            const dayIndex = (date.getDay() + 6) % 7; // Thứ 2 = 0
+            dailyData[dayIndex] += amt;
           }
 
           if (date.getFullYear() === now.getFullYear()) {
             yearTotal += amt;
             monthlyData[date.getMonth()] += amt;
-
             if (date.getMonth() === now.getMonth()) {
               monthTotal += amt;
             }
           }
         });
-
-        document.getElementById('revenueWeek').textContent = weekTotal.toLocaleString() + ' VNĐ';
-        document.getElementById('revenueMonth').textContent = monthTotal.toLocaleString() + ' VNĐ';
-        document.getElementById('revenueYear').textContent = yearTotal.toLocaleString() + ' VNĐ';
-
-        new Chart(document.getElementById('weeklyChart').getContext('2d'), {
-          type: 'line',
-          data: {
-            labels: ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ nhật'],
-            datasets: [{
-              label: 'Doanh thu theo ngày (VNĐ)',
-              data: dailyData,
-              borderColor: '#3b82f6',
-              backgroundColor: 'rgba(59, 130, 246, 0.2)',
-              fill: true,
-              tension: 0.4
-            }]
-          }
-        });
-
-        new Chart(document.getElementById('monthlyChart').getContext('2d'), {
-          type: 'bar',
-          data: {
-            labels: ['Th1', 'Th2', 'Th3', 'Th4', 'Th5', 'Th6', 'Th7', 'Th8', 'Th9', 'Th10', 'Th11', 'Th12'],
-            datasets: [{
-              label: 'Doanh thu theo tháng (VNĐ)',
-              data: monthlyData,
-              backgroundColor: '#10b981'
-            }]
-          }
-        });
       });
-    </script>
-  </body>
+
+      document.getElementById('revenueWeek').textContent = weekTotal.toLocaleString() + ' VNĐ';
+      document.getElementById('revenueMonth').textContent = monthTotal.toLocaleString() + ' VNĐ';
+      document.getElementById('revenueYear').textContent = yearTotal.toLocaleString() + ' VNĐ';
+
+      renderCharts(dailyData, monthlyData);
+    });
+
+    function renderCharts(daily, monthly) {
+      new Chart(document.getElementById('weeklyChart'), {
+        type: 'line',
+        data: {
+          labels: ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'CN'],
+          datasets: [{
+            label: 'Doanh thu tuần (VNĐ)',
+            data: daily,
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59,130,246,0.1)',
+            fill: true,
+            tension: 0.4
+          }]
+        }
+      });
+
+      new Chart(document.getElementById('monthlyChart'), {
+        type: 'bar',
+        data: {
+          labels: ['T1','T2','T3','T4','T5','T6','T7','T8','T9','T10','T11','T12'],
+          datasets: [{
+            label: 'Doanh thu tháng (VNĐ)',
+            data: monthly,
+            backgroundColor: '#10b981'
+          }]
+        }
+      });
+    }
+  </script>
+</body>
 </html>

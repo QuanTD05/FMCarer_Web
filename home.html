@@ -169,7 +169,6 @@
 </head>
 <body>
   <div class="d-flex">
-    <!-- Sidebar -->
     <div class="sidebar">
       <div class="logo">.FMCarer</div>
       <a href="#" class="active">🏠 Trang chủ</a>
@@ -180,7 +179,6 @@
       <button onclick="firebase.auth().signOut().then(() => location.href='login.html')" class="bg-danger text-gray px-3 py-1 rounded ms-3 mt-3">Đăng xuất</button>
     </div>
 
-    <!-- Main content -->
     <div class="flex-grow-1">
       <div class="topbar">
         <h5>Trang Chủ</h5>
@@ -204,16 +202,13 @@
                 <th>Trạng thái</th>
               </tr>
             </thead>
-            <tbody id="postTableBody">
-              <!-- Dữ kiện từ Firebase sẽ hiển thị tại đây -->
-            </tbody>
+            <tbody id="postTableBody"></tbody>
           </table>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Modal phê duyệt -->
   <div class="modal fade" id="approvalModal" tabindex="-1" aria-labelledby="approvalModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content p-4">
@@ -225,11 +220,9 @@
     </div>
   </div>
 
-  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
-
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
@@ -245,7 +238,6 @@
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-
     let currentPostId = null;
 
     firebase.auth().onAuthStateChanged(user => {
@@ -256,26 +248,18 @@
 
       db.ref("Posts").once("value").then(snapshot => {
         const tbody = document.getElementById("postTableBody");
-
         tbody.innerHTML = "";
+
         snapshot.forEach(postSnap => {
           const post = postSnap.val();
           const uid = post.publisher || "Không rõ";
 
+          // Chỉ hiển thị bài viết cộng đồng đang chờ duyệt
+          if (post.shareLevel !== "community" || post.status !== "pending") return;
+
           db.ref("Users/" + uid).once("value").then(userSnap => {
             const userData = userSnap.val();
             const username = userData?.username || "Ẩn danh";
-
-            let statusClass = "table-status-pending";
-            let statusText = "Chờ duyệt";
-
-            if (post.status === "approved") {
-              statusClass = "table-status-approved";
-              statusText = "Phê duyệt";
-            } else if (post.status === "rejected") {
-              statusClass = "table-status-rejected";
-              statusText = "Từ chối";
-            }
 
             const row = `
               <tr>
@@ -286,9 +270,9 @@
                 <td>${post.postid || postSnap.key}</td>
                 <td>
                     <button 
-                        class="${statusClass}" 
+                        class="table-status-pending" 
                         onclick='openApprovalModal("${post.postid || postSnap.key}")'>
-                        ${statusText}
+                        Chờ duyệt
                     </button>
                 </td>
               </tr>`;
@@ -296,37 +280,34 @@
             tbody.innerHTML += row;
           });
         });
-      }).catch(error => {
-        console.error("Lỗi khi lấy dữ kiện bài viết.", error);
       });
     });
 
     function openApprovalModal(id) {
       currentPostId = id;
-      var modal = new bootstrap.Modal(document.getElementById('approvalModal'), {});
+      const modal = new bootstrap.Modal(document.getElementById('approvalModal'));
       modal.show();
 
       document.getElementById('approveBtn').onclick = function() {
-        db.ref("Posts/" + currentPostId).update({status:'approved'})
+        db.ref("Posts/" + currentPostId).update({ status: 'approved' })
           .then(() => {
             alert("Bài đăng được phê duyệt!");
             modal.hide();
             location.reload();
           })
-          .catch((error) => console.error(error)); 
-      }
+          .catch(error => console.error(error));
+      };
 
       document.getElementById('rejectBtn').onclick = function() {
-        db.ref("Posts/" + currentPostId).update({status:'rejected'})
+        db.ref("Posts/" + currentPostId).update({ status: 'rejected' })
           .then(() => {
             alert("Bài đăng bị từ chối.");
             modal.hide();
             location.reload();
           })
-          .catch((error) => console.error(error)); 
-      }
+          .catch(error => console.error(error));
+      };
     }
   </script>
-
 </body>
 </html>
