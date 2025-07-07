@@ -38,7 +38,31 @@
         </div>
       </header>
 
-      <!-- Summary -->
+      <!-- Phần lọc doanh thu theo ngày + biểu đồ -->
+      <section class="bg-white p-6 rounded shadow">
+        <h3 class="font-semibold mb-4">📅 Lọc doanh thu theo ngày</h3>
+        <div class="flex flex-wrap gap-4 items-center">
+          <div>
+            <label class="block text-sm text-gray-700">Từ ngày:</label>
+            <input type="date" id="startDate" class="border border-gray-300 rounded px-3 py-1 mt-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+          </div>
+          <div>
+            <label class="block text-sm text-gray-700">Đến ngày:</label>
+            <input type="date" id="endDate" class="border border-gray-300 rounded px-3 py-1 mt-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+          </div>
+          <button id="btnFilter" class="bg-blue-500 text-white px-4 py-2 rounded mt-6 hover:bg-blue-600">
+            Lọc thống kê
+          </button>
+        </div>
+
+        <div id="filterResult" class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded text-blue-800 text-center hidden shadow"></div>
+
+        <div id="filterChartContainer" class="mt-6 hidden">
+          <canvas id="filterChart" height="100"></canvas>
+        </div>
+      </section>
+
+      <!-- Thống kê tuần/tháng/năm -->
       <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="bg-white p-4 rounded shadow text-center">
           <h2 class="text-sm text-gray-600 mb-2">Tuần này</h2>
@@ -54,12 +78,13 @@
         </div>
       </section>
 
-      <!-- Charts -->
+      <!-- Biểu đồ doanh thu tuần -->
       <section class="bg-white p-6 rounded shadow">
         <h3 class="font-semibold mb-4">📅 Doanh thu theo ngày (tuần hiện tại)</h3>
         <canvas id="weeklyChart" height="100"></canvas>
       </section>
 
+      <!-- Biểu đồ doanh thu tháng -->
       <section class="bg-white p-6 rounded shadow">
         <h3 class="font-semibold mb-4">🗓 Doanh thu theo tháng (năm hiện tại)</h3>
         <canvas id="monthlyChart" height="100"></canvas>
@@ -87,30 +112,32 @@
     const db = getDatabase(app);
     const paymentsRef = ref(db, 'TransactionHistories');
 
-    const now = new Date();
-    const startOfWeek = new Date(now);
-    startOfWeek.setDate(now.getDate() - now.getDay() + 1);
-    startOfWeek.setHours(0, 0, 0, 0);
-    const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(startOfWeek.getDate() + 6);
-    endOfWeek.setHours(23, 59, 59, 999);
+    let cachedSnapshot = null;
+    let filterChartInstance = null;
 
     onValue(paymentsRef, (snapshot) => {
+      cachedSnapshot = snapshot;
       let weekTotal = 0, monthTotal = 0, yearTotal = 0;
       const dailyData = Array(7).fill(0);
       const monthlyData = Array(12).fill(0);
+      const now = new Date();
+      const startOfWeek = new Date(now);
+      startOfWeek.setDate(now.getDate() - now.getDay() + 1);
+      startOfWeek.setHours(0, 0, 0, 0);
+      const endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(startOfWeek.getDate() + 6);
+      endOfWeek.setHours(23, 59, 59, 999);
 
       snapshot.forEach(userSnap => {
         userSnap.forEach(child => {
           const { amount, timestamp } = child.val();
           const date = new Date(timestamp);
           if (isNaN(date)) return;
-
           const amt = Number(amount) || 0;
 
           if (date >= startOfWeek && date <= endOfWeek) {
             weekTotal += amt;
-            const dayIndex = (date.getDay() + 6) % 7; // Thứ 2 = 0
+            const dayIndex = (date.getDay() + 6) % 7;
             dailyData[dayIndex] += amt;
           }
 
@@ -127,7 +154,6 @@
       document.getElementById('revenueWeek').textContent = weekTotal.toLocaleString() + ' VNĐ';
       document.getElementById('revenueMonth').textContent = monthTotal.toLocaleString() + ' VNĐ';
       document.getElementById('revenueYear').textContent = yearTotal.toLocaleString() + ' VNĐ';
-
       renderCharts(dailyData, monthlyData);
     });
 
@@ -140,7 +166,7 @@
             label: 'Doanh thu tuần (VNĐ)',
             data: daily,
             borderColor: '#3b82f6',
-            backgroundColor: 'rgba(59,130,246,0.1)',
+            backgroundColor: 'rgba(59,130,246,0.2)',
             fill: true,
             tension: 0.4
           }]
@@ -159,6 +185,68 @@
         }
       });
     }
+
+    document.getElementById('btnFilter').addEventListener('click', () => {
+      const start = new Date(document.getElementById('startDate').value);
+      const end = new Date(document.getElementById('endDate').value);
+      const resultDiv = document.getElementById('filterResult');
+      const chartContainer = document.getElementById('filterChartContainer');
+      const chartCanvas = document.getElementById('filterChart');
+
+      if (isNaN(start) || isNaN(end)) {
+        resultDiv.textContent = '❌ Vui lòng chọn đầy đủ ngày hợp lệ!';
+        resultDiv.classList.remove('hidden');
+        chartContainer.classList.add('hidden');
+        return;
+      }
+
+      let total = 0;
+      const dailyTotals = {};
+
+      cachedSnapshot.forEach(userSnap => {
+        userSnap.forEach(child => {
+          const { amount, timestamp } = child.val();
+          const date = new Date(timestamp);
+          if (isNaN(date)) return;
+          if (date >= start && date <= end) {
+            total += Number(amount) || 0;
+            const key = date.toLocaleDateString();
+            if (!dailyTotals[key]) dailyTotals[key] = 0;
+            dailyTotals[key] += Number(amount) || 0;
+          }
+        });
+      });
+
+      resultDiv.innerHTML = `
+        ✅ Tổng doanh thu từ <strong>${start.toLocaleDateString()}</strong> đến <strong>${end.toLocaleDateString()}</strong>: 
+        <strong>${total.toLocaleString()} VNĐ</strong>
+      `;
+      resultDiv.classList.remove('hidden');
+
+      const labels = Object.keys(dailyTotals);
+      const data = Object.values(dailyTotals);
+      chartContainer.classList.remove('hidden');
+
+      if (filterChartInstance) {
+        filterChartInstance.destroy();
+      }
+
+      filterChartInstance = new Chart(chartCanvas, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Doanh thu mỗi ngày (VNĐ)',
+            data: data,
+            backgroundColor: '#3b82f6',
+            borderRadius: 8
+          }]
+        },
+        options: {
+          scales: { y: { beginAtZero: true } }
+        }
+      });
+    });
   </script>
 </body>
 </html>
